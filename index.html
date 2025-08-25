@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>วันเกิดไอ้ลาว</title>
+<link href="https://fonts.googleapis.com/css2?family=Sriracha&family=Kanit:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+body {
+  margin:0; font-family:"Kanit", sans-serif;
+  background: linear-gradient(135deg,#0f172a,#1e293b);
+  color:#fff; display:flex; justify-content:center; align-items:center; height:100vh;
+  overflow:hidden;
+}
+
+/* Envelope */
+.envelope-container {
+  position: relative; width:300px; height:200px;
+  background:#facc15; border-radius:8px;
+  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  cursor:pointer; display:flex; justify-content:center; align-items:center;
+  perspective: 1000px;
+}
+.envelope {
+  width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform 1s;
+}
+.envelope.open {
+  transform: rotateX(-180deg);
+}
+.envelope-front, .envelope-back {
+  position:absolute; width:100%; height:100%; backface-visibility:hidden;
+  display:flex; justify-content:center; align-items:center; font-family:"Sriracha", cursive; font-size:24px; color:#111;
+  border-radius:8px;
+}
+.envelope-front { background:#facc15; }
+.envelope-back { background:#fde68a; transform: rotateX(180deg); }
+
+/* Slideshow */
+.slideshow {
+  position: relative; width: 90%; max-width: 800px; height: 500px;
+  border-radius:16px; overflow:hidden; box-shadow:0 20px 60px rgba(0,0,0,.5);
+  background:#000; display:none; justify-content:center; align-items:center; flex-direction:column; text-align:center;
+}
+.slide-img { width:100%; height:100%; object-fit:cover; position:absolute; opacity:0; transition: opacity 1s ease; }
+.slide-text { position:absolute; bottom:20px; left:0; right:0; font-size:22px; color:#fff; text-shadow:0 2px 6px rgba(0,0,0,.8); opacity:0; transition: opacity 1s ease; }
+
+/* Final message */
+.final { display:none; text-align:center; animation: fadeIn 2s ease forwards; }
+.final h1 { font-family:"Sriracha", cursive; font-size:42px; color:#f472b6; margin-bottom:30px; }
+@keyframes fadeIn { from{opacity:0; transform:translateY(20px);} to{opacity:1; transform:translateY(0);} }
+
+/* Cake */
+.cake { position: relative; width: 200px; height: 120px; margin:0 auto; background:#f59e0b; border-radius:0 0 20px 20px; display:none; }
+.candle { position: absolute; top: -40px; left: 50%; transform: translateX(-50%); width:20px; height:40px; background:#fff; border-radius:4px; }
+.flame { position:absolute; top:-20px; left:50%; transform:translateX(-50%); width:16px; height:16px;
+        background: radial-gradient(circle,#fbbf24 0%,#f59e0b 60%,transparent 70%);
+        border-radius:50%; animation:flicker 0.4s infinite alternate; cursor:pointer; }
+@keyframes flicker { from { transform:translateX(-50%) scale(1); opacity:1; } to { transform:translateX(-50%) scale(1.2); opacity:0.8; } }
+</style>
+</head>
+<body>
+
+<div class="envelope-container" id="envelope">
+  <div class="envelope" id="env">
+    <div class="envelope-front">กดเปิด</div>
+    <div class="envelope-back">กดทำควยไร555</div>
+  </div>
+</div>
+
+<div class="slideshow" id="slideshow"></div>
+
+<div class="final" id="final">
+  <h1 id="final-text">สุขสันต์วันเกิดนะเพื่อนแก่ขึ้นอีกปี<br>โง่คือเก่าไม่เอานะ</h1>
+  <div class="cake" id="cake">
+    <div class="candle"><div class="flame" id="flame"></div></div>
+  </div>
+</div>
+
+<script>
+const envelope = document.getElementById("envelope");
+const env = document.getElementById("env");
+const slideshow = document.getElementById("slideshow");
+const final = document.getElementById("final");
+const finalText = document.getElementById("final-text");
+const cake = document.getElementById("cake");
+const flame = document.getElementById("flame");
+
+envelope.addEventListener("click", () => {
+  env.classList.add("open");
+  setTimeout(() => {
+    envelope.style.display = "none";
+    startSlideshow();
+  }, 1000);
+});
+
+// กำหนดชื่อรูปและข้อความตรงนี้
+const slidesData = [
+  { url: 'images/image1.jpg', text: 'ภาพตอนไหนวะ' },
+  { url: 'images/image2.jpg', text: 'ไอ้เหี้ยโล้น+โล้น' },
+  { url: 'images/image3.jpg', text: 'หน้าแม่งเหมือนใครวะ' },
+  { url: 'images/image4.jpg', text: 'รูปโครตลาว' }
+];
+
+let slides = [];
+let texts = [];
+let current = 0;
+
+function startSlideshow(){
+  // สร้าง <img> และ <div> จาก slidesData
+  slidesData.forEach(item => {
+    let img = document.createElement('img');
+    img.src = item.url;
+    img.className = 'slide-img';
+    slideshow.appendChild(img);
+    slides.push(img);
+
+    let txt = document.createElement('div');
+    txt.className = 'slide-text';
+    txt.textContent = item.text;
+    slideshow.appendChild(txt);
+    texts.push(txt);
+  });
+
+  slideshow.style.display = 'flex';
+  showSlide(current);
+}
+
+function showSlide(index){
+  slides.forEach((img,i)=> img.style.opacity=(i===index?1:0));
+  texts.forEach((txt,i)=> txt.style.opacity=(i===index?1:0));
+
+  if(index < slides.length-1){
+    setTimeout(()=>{ current++; showSlide(current); }, 3000);
+  } else {
+    setTimeout(()=>{
+      slideshow.style.display='none';
+      final.style.display='block';
+      setTimeout(()=>{
+        finalText.style.display='none';
+        cake.style.display='block';
+      },4500);
+    },3000);
+  }
+}
+
+flame.addEventListener("click", ()=>{
+  flame.style.display='none';
+  alert("สุขสันต์วันเกิดเพื่อน");
+});
+</script>
+
+</body>
+</html>
